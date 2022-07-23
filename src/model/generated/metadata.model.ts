@@ -3,8 +3,8 @@ import * as marshal from "./marshal"
 import {Attribute} from "./_attribute"
 
 @Entity_()
-export class MetadataEntity {
-  constructor(props?: Partial<MetadataEntity>) {
+export class Metadata {
+  constructor(props?: Partial<Metadata>) {
     Object.assign(this, props)
   }
 

@@ -1,4 +1,4 @@
-import { tokenUriOf } from '../../contract'
+// import { tokenUriOf } from '../../contract'
 import { BIGINT_ONE } from './constants'
 import { decode1155MultiTransfer, decode1155SingleTransfer, decode1155UriChange, decode721Transfer } from './evm'
 import { bigintOf, contractOf, mapAndMatch } from './extract'
@@ -21,23 +21,23 @@ export function getCreateCollectionEvent(ctx: Context): CreateCollectionEvent {
   return {} as CreateCollectionEvent
 }
 
-export function getCreateTokenEvent(ctx: Context): CreateTokenEvent {
-  const { to, tokenId } = decode721Transfer(ctx)
-  const collectionId = contractOf(ctx)
-  const metadata = tokenUriOf(collectionId, tokenId.toString())
-  // const metadata = Promise.resolve('')
+// export function getCreateTokenEvent(ctx: Context): CreateTokenEvent {
+//   const {from, to, tokenId } = decode721Transfer(ctx)
+//   const collectionId = contractOf(ctx)
+//   const metadata = tokenUriOf(collectionId, tokenId.toString())
+//   // const metadata = Promise.resolve('')
 
-  return { collectionId, caller: to, sn: tokenId.toString(), metadata, count: BIGINT_ONE  }
-}
+//   return { collectionId, caller: to, sn: tokenId.toString(), metadata, count: BIGINT_ONE  }
+// }
 
-export function getSingleCreateTokenEvent(ctx: Context): CreateTokenEvent {
-  const { to, id: tokenId, value } = decode1155SingleTransfer(ctx)
-  const collectionId = contractOf(ctx)
-  const metadata = uriOf(collectionId, tokenId.toString())
-//   const metadata = Promise.resolve('')
+// export function getSingleCreateTokenEvent(ctx: Context): CreateTokenEvent {
+//   const { to, id: tokenId, value } = decode1155SingleTransfer(ctx)
+//   const collectionId = contractOf(ctx)
+//   const metadata = tokenUriOf(collectionId, tokenId.toString())
+// //   const metadata = Promise.resolve('')
 
-  return { collectionId, caller: to, sn: tokenId.toString(), metadata, count: bigintOf(value) }
-}
+//   return { collectionId, caller: to, sn: tokenId.toString(), metadata, count: bigintOf(value) }
+// }
 
 export function getMultiCreateTokenEvent(
   ctx: Context

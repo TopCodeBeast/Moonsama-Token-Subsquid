@@ -3,15 +3,19 @@ import { Contracts } from '../../processable'
 import logger from './logger'
 
 
-export const BASE_URL = 'https://moonriver-subgraph.moonsama.com/subgraphs/name/moonsama/'
-
+export const BASE_URL = "https://moonsama.mypinata.cloud/";
+const https = require("https");
 const api = Axios.create({
   baseURL: BASE_URL,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
   withCredentials: false,
-})
+  timeout: 100000,
+  maxContentLength: 500 * 1000 * 1000,
+  httpsAgent: new https.Agent({ keepAlive: true })
+});
+
 
 const query = `
 query MyQuery($id: ID!) {

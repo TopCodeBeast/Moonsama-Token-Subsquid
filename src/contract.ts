@@ -2,8 +2,8 @@ import { assertNotNull, Store } from "@subsquid/substrate-evm-processor"
 import { Contract, ethers } from "ethers"
 import * as erc721 from "./abi/erc721"
 import * as erc1155 from "./abi/erc1155"
-import { CollectionEntity, CollectionType } from "./model"
-import { Contracts, ContractsMap } from "./processable"
+// import { CollectionEntity, CollectionType } from "./model"
+// import { Contracts, ContractsMap } from "./processable"
 import { contractHasGraph, tokenUriOf as tokenMetaOf } from './mappings/utils/graph'
  
 export const CHAIN_NODE = "wss://public-rpc.pinknode.io/moonriver"
@@ -15,11 +15,11 @@ export const provider = new ethers.providers.StaticJsonRpcProvider(HTTP_NODE, {
 })
 // export const CHAIN_NODE = "wss://wss.api.moonriver.moonbeam.network";
 
-export const contract = new ethers.Contract(
-  "0xb654611f84a8dc429ba3cb4fda9fad236c505a1a",
-  erc721.abi,
-  provider
-);
+// export const contract = new ethers.Contract(
+//   "0xb654611f84a8dc429ba3cb4fda9fad236c505a1a",
+//   erc721.abi,
+//   provider
+// );
 
 export const multiContract = new ethers.Contract(
   "0x1974eeaf317ecf792ff307f25a3521c35eecde86",
@@ -27,59 +27,92 @@ export const multiContract = new ethers.Contract(
   provider
 );
 
-export const tokenUriOf = (contract: string, tokenId: string): Promise<string> => {
-  return contractHasGraph(contract) ? tokenMetaOf(contract, tokenId) : contractify(contract).tokenURI(tokenId).catch(() => "");
-  // return contractify(contract).tokenURI(tokenId).catch(() => "");
+// export const tokenUriOf = (contract: string, tokenId: string): Promise<string> => {
+//   return contractHasGraph(contract) ? tokenMetaOf(contract, tokenId) : contractify(contract).tokenURI(tokenId).catch(() => "");
+//   // return contractify(contract).tokenURI(tokenId).catch(() => "");
+// }
+
+// export const metadataFromUri = (contract: Contracts | string, tokenId: string): Promise<string> => {
+//   const { type } = ContractsMap[contract as Contracts];
+//   return isERC721(type) ? tokenUriOf(contract, tokenId) : uriOf(contract, tokenId);
+// }
+
+// export const uriOf = (contract: string, tokenId: string): Promise<string> => {
+//   return contractify(contract, CollectionType.ERC1155).uri(tokenId).catch(() => "");
+// }
+
+// export const baseUriOf = (contract: string): Promise<string> => {
+//   return contractify(contract).baseURI().catch(() => "");
+// }
+
+// function contractify(address: string, type = CollectionType.ERC721): Contract {
+//   return eitherOr(type, contract.attach(address), multiContract.attach(address));
+// }
+
+// export function eitherOr<T>(type = CollectionType.ERC721, one: T, two: T): T {
+//   return isERC721(type) ? one : two;
+// }
+
+// export function isERC721(type: CollectionType): boolean {
+//   return type === CollectionType.ERC721;
+// }
+
+// export function createContractEntity(): CollectionEntity {
+//   return new CollectionEntity({
+//     id: contract.address,
+//     name: "Moonsama",
+//     symbol: "MSAMA",
+//     max: 1000,
+//     currentOwner: '0x05b9b543328d4c797e1eec747efc65d97de542f2',
+//     issuer: '0x05b9b543328d4c797e1eec747efc65d97de542f2',
+//     updatedAt: new Date(),
+//     createdAt: new Date(),
+//     type: CollectionType.ERC721,
+//   });
+// }
+ 
+// let contractEntity: CollectionEntity | undefined;
+ 
+// export async function getContractEntity({
+//   store,
+// }: {
+//   store: Store;
+// }): Promise<CollectionEntity> {
+//   if (contractEntity == null) {
+//     contractEntity = await store.get(CollectionEntity, contract.address);
+//   }
+//   return assertNotNull(contractEntity);
+// }
+
+
+export async function getTokenURI(contract: ethers.Contract, tokenId: string): Promise<string> {
+  return retry(async () => timeout(contract.tokenURI(tokenId)));
 }
 
-export const metadataFromUri = (contract: Contracts | string, tokenId: string): Promise<string> => {
-  const { type } = ContractsMap[contract as Contracts];
-  return isERC721(type) ? tokenUriOf(contract, tokenId) : uriOf(contract, tokenId);
-}
+async function timeout<T>(res: Promise<T>, seconds = 200): Promise<T> {
+  return new Promise((resolve, reject) => {
+    let timer: NodeJS.Timeout|undefined = setTimeout(() => {
+      timer = undefined;
+      reject(new Error(`Request timed out in ${seconds} seconds`));
+    }, seconds * 1000);
 
-export const uriOf = (contract: string, tokenId: string): Promise<string> => {
-  return contractify(contract, CollectionType.ERC1155).uri(tokenId).catch(() => "");
-}
-
-export const baseUriOf = (contract: string): Promise<string> => {
-  return contractify(contract).baseURI().catch(() => "");
-}
-
-function contractify(address: string, type = CollectionType.ERC721): Contract {
-  return eitherOr(type, contract.attach(address), multiContract.attach(address));
-}
-
-export function eitherOr<T>(type = CollectionType.ERC721, one: T, two: T): T {
-  return isERC721(type) ? one : two;
-}
-
-export function isERC721(type: CollectionType): boolean {
-  return type === CollectionType.ERC721;
-}
-
-export function createContractEntity(): CollectionEntity {
-  return new CollectionEntity({
-    id: contract.address,
-    name: "Moonsama",
-    symbol: "MSAMA",
-    max: 1000,
-    currentOwner: '0x05b9b543328d4c797e1eec747efc65d97de542f2',
-    issuer: '0x05b9b543328d4c797e1eec747efc65d97de542f2',
-    updatedAt: new Date(),
-    createdAt: new Date(),
-    type: CollectionType.ERC721,
+    res
+      .finally(() => {
+        if (timer != null) {
+          clearTimeout(timer);
+        }
+      })
+      .then(resolve, reject);
   });
 }
- 
-let contractEntity: CollectionEntity | undefined;
- 
-export async function getContractEntity({
-  store,
-}: {
-  store: Store;
-}): Promise<CollectionEntity> {
-  if (contractEntity == null) {
-    contractEntity = await store.get(CollectionEntity, contract.address);
+
+async function retry<T>(promiseFn: () => Promise<T>, attempts = 3): Promise<T> {
+  for (let i = 0; i < attempts; i+=1) {
+    try {
+      return await promiseFn();
+    } catch (err) {
+      console.log(err);
+    }
   }
-  return assertNotNull(contractEntity);
+  throw new Error(`Error after ${attempts} attempts`);
 }

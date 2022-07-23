@@ -7,7 +7,6 @@ function toBaseEvent(event: Context): BaseCall {
   const caller = event.substrate.extrinsic?.signer.toString() || ''; 
   const blockNumber = event.substrate.block.height.toString();
   const timestamp = new Date(event.substrate.block.timestamp);
-
   return { caller, blockNumber, timestamp };
 }
 

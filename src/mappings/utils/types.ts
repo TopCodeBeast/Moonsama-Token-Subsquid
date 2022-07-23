@@ -2,7 +2,7 @@ import { EvmLogHandlerContext } from '@subsquid/substrate-evm-processor'
 import md5 from 'md5'
 import { nanoid } from 'nanoid'
 import { Attribute } from '../../model/generated/_attribute'
-import { Interaction } from '../../model/generated/_interaction'
+// import { Interaction } from '../../model/generated/_interaction'
 import { createTokenId } from './extract'
 
 export type BaseCall = {
@@ -11,22 +11,22 @@ export type BaseCall = {
   timestamp: Date;
 }
 
-export { Interaction }
+// export { Interaction }
 
 
-type OneOfInteraction = Interaction
+// type OneOfInteraction = Interaction
 
 
-export function eventFrom<T>(interaction: T,  { blockNumber, caller, timestamp }: BaseCall, meta: string, currentOwner?: string): IEvent<T> {
-  return {
-    interaction,
-    blockNumber: BigInt(blockNumber),
-    caller,
-    currentOwner: currentOwner ?? caller,
-    timestamp,
-    meta
-  }
-}
+// export function eventFrom<T>(interaction: T,  { blockNumber, caller, timestamp }: BaseCall, meta: string, currentOwner?: string): IEvent<T> {
+//   return {
+//     interaction,
+//     blockNumber: BigInt(blockNumber),
+//     caller,
+//     currentOwner: currentOwner ?? caller,
+//     timestamp,
+//     meta
+//   }
+// }
 
 export function attributeFrom(attribute: MetadataAttribute): Attribute {
   return new Attribute({}, {
@@ -41,14 +41,14 @@ export type Context = EvmLogHandlerContext
 
 export type Optional<T> = T | null
 
-export interface IEvent<T = OneOfInteraction> {
-  interaction: T;
-  blockNumber: bigint,
-  caller: string,
-  currentOwner: string,
-  timestamp: Date,
-  meta: string;
-}
+// export interface IEvent<T = OneOfInteraction> {
+//   interaction: T;
+//   blockNumber: bigint,
+//   caller: string,
+//   currentOwner: string,
+//   timestamp: Date,
+//   meta: string;
+// }
 
 // BASE 
 
@@ -142,7 +142,7 @@ export function ensure<T>(value: any): T {
   return value as T
 }
 
-export const eventId = (id: string, event: Interaction) => `${id}-${event}-${nanoid()}`
+// export const eventId = (id: string, event: Interaction) => `${id}-${event}-${nanoid()}`
 
 export const createOfferId = (id: string, caller: string) => `${id}-${caller}`
 
@@ -160,6 +160,12 @@ export type TokenMetadata = {
 }
 
 export type MetadataAttribute = {
+  display_type?: string
+  trait_type?: string
+  value: number | string
+}
+
+export type MetadataAttribute1 = {
   display_type?: DisplayType
   trait_type?: string
   value: number | string

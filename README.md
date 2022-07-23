@@ -165,3 +165,17 @@ Hydra tools expect a certain directory layout:
 ```sh
 npx squid-evm-typegen --abi ./src/abi/ERC1155.json --output ./src/abi/erc1155.ts
 ```
+
+
+npm ci
+npm run build
+docker compose up -d
+npx squid-typeorm-migration apply
+node -r dotenv/config lib/processor.js
+# open a separate terminal for this next command
+npx squid-graphql-server
+
+npx squid-typeorm-codegen
+
+npx squid-evm-typegen --abi=src/abi/ERC721.json --output=src/abi/erc721.ts
+npx squid-evm-typegen --abi=src/abi/ERC1155.json --output=src/abi/ERC1155.ts
