@@ -421,10 +421,10 @@ export async function saveTransfers(context: Context):Promise<void>  {
       });
     }
 
-    let token = await get(context.store, Token , tokenId.toString());
+    let token = await get(context.store, Token , contractAddress+':'+tokenId.toString());
     if (token == null) {
       token = new Token({
-        id: tokenId.toString(),
+        id: contractAddress+':'+tokenId.toString(),
         numericId: BigInt(tokenId.toString()),
         uri: tokenURI,
         meta:metadata,
@@ -444,7 +444,6 @@ export async function saveTransfers(context: Context):Promise<void>  {
       token,
     });
 
-    // console.log("transfer", transfer)
     await context.store.save(previousOwner) 
     await context.store.save(currentOwner) 
     await context.store.save(contractData) 
